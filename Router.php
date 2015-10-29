@@ -53,20 +53,21 @@ class Router {
 		$serverRequestUrl = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
         $serverRequestMethod = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
 
-		$requestUrl = substr($serverRequestUrl, strlen($this->getBasePath()));
+		if (in_array('/', array($serverRequestUrl, $this->getBasePath())))
+			$requestUrl = $serverRequestUrl;
+		else
+			$requestUrl = substr($serverRequestUrl, strlen($this->getBasePath()));
+		
 
 		if (($strpos = strpos($requestUrl, '?')) !== false) {
 			$requestUrl = substr($requestUrl, 0, $strpos);
 		}
-
-        //$_REQUEST = array_merge($_GET, $_POST);
 
         foreach($this->_routes as $handler)
         {
             list($_method, $_route, $_target) = $handler;
 
             if ($serverRequestMethod != $_method) {
-                header( $_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found');
                 continue;
             }
 			
@@ -76,14 +77,28 @@ class Router {
 			{
 				if($params) {
 					foreach($params as $key => $value) {
-						if(is_numeric($key)) unset($params[$key]);
+						if(is_numeric($key)) 
+							unset($params[$key]);
 					}
 				}
 
-				if(is_callable($_target)) {
-					call_user_func_array($_target, $params );
+				if(is_callable($_target) && $_method == 'GET')
+				{
+					call_user_func_array($_target, $params);
 					return;
-				} else {
+				}
+				elseif ($_method == 'POST')
+				{
+					$_target = explode('#', $_target);
+					$model = $_target[0];
+					$method = isset($_target[1]) ? $_target[1] : 'index';
+					
+					$result = forward_static_call_array([$model, $method], $params);
+					
+					echo json_encode($result);
+					return;
+				}
+				else {
 					header( $_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found');
 					return;
 				}
@@ -116,7 +131,7 @@ class Router {
 			}
 		}
         
-		return "`^$route$`u";
+		return "`^{$route}$`u";
 	}
 }
 
