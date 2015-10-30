@@ -3,20 +3,33 @@ namespace Models;
 
 class News {
 	
-	public static function get($newsId = 0) {
-	
-		$news = [
-			'1va',
-			'2ra',
-			'3ta',
-		];
+	public static function get($newsId = 0)
+	{
+		$db = new \Lib\Db\Db();
+		$success = 1;
+		$message = '';
+
+		if (empty($newsId))
+		{
+			$news = $db->prepare('
+				SELECT * FROM news WHERE 1
+			')->execute()->fetchAllAssoc();
+		}
+		else
+		{
+			$news = $db->prepare('
+				SELECT * FROM news WHERE id = ?
+			', [$newsId])->execute()->fetchAllAssoc();
+		}
 		
-		if (!empty($newsId)) {
-			return ['success' => 1, 'news' => $news[$newsId]];
+		if (empty($news)) {
+			$success = 0;
+			$message = 'News Not Found';
 		}
 	
-		return ['success' => 1, 'news' => $news];
+		return ['success' => $success, 'news' => $news, 'message' => $message];
 	}
+
 	public static function create() {
 		return ['success' => 0, 'message' => 'ala bala'];
 	}
