@@ -44,7 +44,7 @@ class Router {
 
 	public function map($method, $route, $target)
 	{
-		$this->_routes[$route] = array($method, $route, $target);
+		$this->_routes[] = array($method, $route, $target);
 	}
 
 	public function match()
@@ -63,22 +63,21 @@ class Router {
 			$requestUrl = substr($requestUrl, 0, $strpos);
 		}
 
-        foreach($this->_routes as $handler)
+        foreach($this->_routes as $route)
         {
-            list($_method, $_route, $_target) = $handler;
+            list($_method, $_route, $_target) = $route;
 
             if ($serverRequestMethod != $_method) {
                 continue;
             }
 			
             $match = preg_match($this->buildRoute($_route), $requestUrl, $params);
-
 			if(($match == true || $match > 0))
 			{
-				if($params) {
+				if($params)
+                {
 					foreach($params as $key => $value) {
-						if(is_numeric($key)) 
-							unset($params[$key]);
+						if(is_numeric($key)) unset($params[$key]);
 					}
 				}
 
@@ -87,7 +86,7 @@ class Router {
 					call_user_func_array($_target, $params);
 					return;
 				}
-				elseif (in_array($_method, ['POST', 'DELETE']))
+				elseif (in_array($_method, ['POST', 'DELETE', 'PUT']))
 				{
 					$_target = explode('#', $_target);
 					
@@ -141,27 +140,3 @@ class Router {
 		return "`^{$route}$`u";
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
