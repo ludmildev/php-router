@@ -10,19 +10,15 @@ use Lib\Router;
 
 $router = new Router('/');
 
-$router->map('GET', '/', function() {
-    echo ' homepage ';
-});
-
-$router->map('POST', '/news', 'News#create');
-$router->map('POST', '/news/[:newsId]', 'News#update');
-
-$router->map('GET', '/news/[:newsId]', function($newsId = 0) {
-	echo json_encode(\Models\News::get($newsId));
-});
 $router->map('GET', '/news', function() {
-	echo json_encode(\Models\News::get());
+    echo json_encode(\Models\News::get());
 });
+$router->map('GET', '/news/[:id]', function($id = 0) {
+    echo json_encode(\Models\News::get($id));
+});
+$router->map('POST', '/news/[:newsId]', 'News#update');
+$router->map('POST', '/news', 'News#create');
+$router->map('DELETE', '/news/[:newsId]', 'News#delete');
 
 $routes = $router->getRoutes();
 
