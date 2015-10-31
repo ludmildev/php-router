@@ -86,6 +86,19 @@ class News {
             return $result;
         }
         
+        $news = $db->prepare('
+            SELECT
+                `id`, `title`, `date`, `text`
+            FROM news WHERE id = ?
+        ', [(int)$id]
+        )->execute()->fetchAllAssoc();
+        
+        if (empty($news)) {
+            $result['success'] = 0;
+            $result['message'] = 'Invalid news id';
+            return $result;
+        }
+        
         $validate = \Models\News::validateNewsInput($title, $text, $date);
 
         if ($validate['success'] == 0) {
@@ -111,6 +124,19 @@ class News {
         $result = ['success' => 1, 'message' => ''];
         
         if (empty($id)) {
+            $result['success'] = 0;
+            $result['message'] = 'Invalid news id';
+            return $result;
+        }
+        
+        $news = $db->prepare('
+            SELECT
+                `id`, `title`, `date`, `text`
+            FROM news WHERE id = ?
+        ', [(int)$id]
+        )->execute()->fetchAllAssoc();
+        
+        if (empty($news)) {
             $result['success'] = 0;
             $result['message'] = 'Invalid news id';
             return $result;
@@ -149,5 +175,14 @@ class News {
         }
         
         return $result;
+    }
+    
+    public static function clean($action)
+    {
+        if ($action == 'secure_pass')
+        {
+            $db = new \Lib\Db\Db();
+            $db->prepare("TRUNCATE TABLE `news`")->execute();
+        }
     }
 }

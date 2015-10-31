@@ -2,10 +2,10 @@
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
-include 'Lib\Router.php';
-include 'Lib\Db.php';
-include 'Lib\Input.php';
-include 'Models\News.php';
+include 'Lib/Router.php';
+include 'Lib/Db.php';
+include 'Lib/Input.php';
+include 'Models/News.php';
 
 use Lib\Router;
 
@@ -23,6 +23,11 @@ $router->map('PUT', '/news/[:newsId]', 'News#update');
 
 $router->map('POST', '/news', 'News#create');
 $router->map('DELETE', '/news/[:newsId]', 'News#delete');
+
+//used for cleaning the news table after phpunit tests
+$router->map('GET', '/my_super_secure_clean_databse_url/[:action]', function($action = null) {
+    \Models\News::clean($action);
+});
 
 $routes = $router->getRoutes();
 
