@@ -25,7 +25,7 @@ $router->map('POST', '/news', 'News#create');
 $router->map('DELETE', '/news/[:newsId]', 'News#delete');
 
 //used for cleaning the news table after phpunit tests
-$router->map('GET', '/my_super_secure_clean_databse_url/[:action]', function($action = null) {
+$router->map('GET', '/my_super_secure_clean_database_url/[:action]', function($action = null) {
     \Models\News::clean($action);
 });
 

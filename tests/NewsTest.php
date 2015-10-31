@@ -239,6 +239,6 @@ class NewsTest extends PHPUnit_Framework_TestCase
         $response = $client->request('DELETE', '/news/1');
         $body = $response->getBody();
         $this->assertEquals('{"success":1,"message":""}', (string)$body);
-        $client->request('GET', '/my_super_secure_clean_databse_url/secure_pass');
+        $client->request('GET', '/my_super_secure_clean_database_url/secure_pass');
     }
 }
