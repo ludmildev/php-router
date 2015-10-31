@@ -10,7 +10,10 @@ class NewsTest extends PHPUnit_Framework_TestCase
         $client = new Client([
             'base_uri' => $this->_baseUri
         ]);
-
+        
+        //cleaning the news table for tests
+        $client->request('GET', '/my_super_secure_clean_database_url/secure_pass');
+        
         $response = $client->request('GET', 'news');
         $body = $response->getBody();
         
