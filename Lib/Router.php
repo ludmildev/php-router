@@ -76,9 +76,6 @@ class Router {
 
 			array_splice($_routeParts, 0, 1);
 			array_splice($_uriParts, 0, 1);
-			
-			var_dump($_routeParts);
-			var_dump($_uriParts);
 
 			if (count($_routeParts) != count($_uriParts)) {
 				continue;
