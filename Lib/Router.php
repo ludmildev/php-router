@@ -70,73 +70,78 @@ class Router {
             if ($serverRequestMethod != $_method) {
                 continue;
             }
-			
-            $match = preg_match($this->buildRoute($_route), $requestUrl, $params);
-			if(($match == true || $match > 0))
-			{
-				if($params)
-                {
-					foreach($params as $key => $value) {
-						if(is_numeric($key)) unset($params[$key]);
-					}
-				}
 
-				if(is_callable($_target) && $_method == 'GET')
+            $_routeParts = explode('/', $_route);
+            $_uriParts = explode('/', $requestUrl);
+
+			array_splice($_routeParts, 0, 1);
+			array_splice($_uriParts, 0, 1);
+
+			if (count($_routeParts) != count($_uriParts)) {
+				continue;
+			}
+
+			$thisRoute = true;
+			$params = array();
+			
+            foreach($_routeParts as $i => $part)
+            {
+                if ($part == $_uriParts[$i]) {
+					continue;
+                }
+				
+				$partLength = strlen($part) - 1;
+				
+				if (stripos($part, '[') == 0 && stripos($part, ']') == $partLength)
 				{
-					call_user_func_array($_target, $params);
-					return;
-				}
-				elseif (in_array($_method, ['POST', 'DELETE', 'PUT']))
-				{
-					$_target = explode('#', $_target);
+					$variables = explode(':', substr($part, 1, $partLength-1));
 					
-					if (!isset($_target[0]) || !isset($_target[1])) {
-						throw new \Exception('Invalid Model Data.');
+					if ($variables[0] == 'int' && !is_numeric($_uriParts[$i])) {
+						$thisRoute = false;
+						break;
+					}
+					elseif ($variables[0] == 'str' && !is_string($_uriParts[$i])) {
+						$thisRoute = false;
+						break;
 					}
 					
-					//TODO: check if class and method exists and is callable
-					
-					$model = $_target[0];
-					$method = $_target[1];
-					
-					$result = forward_static_call_array(['\\Models\\'.$model, $method], $params);
-					
-					echo json_encode($result);
-					return;
+					$params[$variables[1]] = $_uriParts[$i];
 				}
-				else {
-					header( $_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found');
-					return;
+            }
+			
+			if (!$thisRoute)
+				continue;
+			
+			if(is_callable($_target) && $_method == 'GET')
+			{
+				call_user_func_array($_target, $params);
+				return;
+			}
+			elseif (in_array($_method, ['POST', 'DELETE', 'PUT']))
+			{
+				$_target = explode('#', $_target);
+				
+				if (!isset($_target[0]) || !isset($_target[1])) {
+					throw new \Exception('Invalid Model Data.');
 				}
+				
+				//TODO: check if class and method exists and is callable
+				
+				$model = $_target[0];
+				$method = $_target[1];
+				
+				$result = forward_static_call_array(['\\Models\\'.$model, $method], $params);
+				
+				echo json_encode($result);
+				return;
+			}
+			else {
+				header( $_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found');
+				return;
 			}
         }
 		
 		header( $_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found');
 		return;
-	}
-
-    private function buildRoute($route)
-    {
-        $_match = preg_match_all('/(\[:(.*?)\])/', $route, $matches, PREG_SET_ORDER);
-
-		if ($_match)
-        {
-			foreach($matches as $match)
-            {
-				list($search, $pre, $value) = $match;
-                
-				if ($pre === '.') {
-					$pre = '\.';
-				}
-
-				$pattern = '(?:('
-						. ($value !== '' ? "?<$value>" : null)
-						. '[^/\.]++'
-						. '))';
-				$route = str_replace($search, $pattern, $route);
-			}
-		}
-        
-		return "`^{$route}$`u";
 	}
 }
