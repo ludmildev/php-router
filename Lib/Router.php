@@ -76,8 +76,15 @@ class Router {
 
 			array_splice($_routeParts, 0, 1);
 			array_splice($_uriParts, 0, 1);
+			
+			var_dump($_routeParts);
+			var_dump($_uriParts);
 
 			if (count($_routeParts) != count($_uriParts)) {
+				continue;
+			}
+			
+			if (count($_routeParts) == 1 && count($_uriParts) == 1 && $_routeParts != $_uriParts) {
 				continue;
 			}
 
@@ -100,7 +107,7 @@ class Router {
 						$thisRoute = false;
 						break;
 					}
-					elseif ($variables[0] == 'str' && !is_string($_uriParts[$i])) {
+					elseif ($variables[0] == 'str' && is_numeric($_uriParts[$i])) {
 						$thisRoute = false;
 						break;
 					}
