@@ -23,6 +23,4 @@ $router->map('PUT', 'news/[int:newsId]', 'Class#method');
 $router->map('POST', 'news', 'Class#method');
 $router->map('DELETE', 'news/[int:newsId]', 'Class#method');
 
-$routes = $router->getRoutes();
-
 $router->match();

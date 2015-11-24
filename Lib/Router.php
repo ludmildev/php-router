@@ -49,7 +49,6 @@ class Router {
 
 	public function match()
 	{
-        $match = false;
 		$serverRequestUrl = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
         $serverRequestMethod = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
 
@@ -58,7 +57,6 @@ class Router {
 		else
 			$requestUrl = substr($serverRequestUrl, strlen($this->getBasePath()));
 		
-
 		if (($strpos = strpos($requestUrl, '?')) !== false) {
 			$requestUrl = substr($requestUrl, 0, $strpos);
 		}
