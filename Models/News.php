@@ -5,7 +5,7 @@ class News {
 
 	public static function get($newsId = 0)
 	{
-		$db = new \Lib\Db\Db();
+		$db = new \Lib\Db();
 		$result = ['success' => 1, 'message' => ''];
 
 		if (empty($newsId))
@@ -39,7 +39,7 @@ class News {
 
 	public static function create()
     {
-        $db     = new \Lib\Db\Db();
+        $db     = new \Lib\Db();
         $title  = \Lib\Input::get('post', 'title', '', 'trim');
         $text   = \Lib\Input::get('post', 'text', '', 'trim');
         $date   = \Lib\Input::get('post', 'date', '');
@@ -73,7 +73,7 @@ class News {
 	public static function update($id = 0)
     {
         
-        $db     = new \Lib\Db\Db();
+        $db     = new \Lib\Db();
         $title  = \Lib\Input::get('put', 'title', '', 'trim');
         $text   = \Lib\Input::get('put', 'text', '', 'trim');
         $date   = \Lib\Input::get('put', 'date', '');
@@ -120,7 +120,7 @@ class News {
     
     public static function delete($id = 0)
     {
-        $db     = new \Lib\Db\Db();
+        $db     = new \Lib\Db();
         $result = ['success' => 1, 'message' => ''];
         
         if (empty($id)) {
@@ -181,7 +181,7 @@ class News {
     {
         if ($action == 'secure_pass')
         {
-            $db = new \Lib\Db\Db();
+            $db = new \Lib\Db();
             $db->prepare("TRUNCATE TABLE `news`")->execute();
         }
     }
