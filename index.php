@@ -9,25 +9,21 @@ include 'Models/News.php';
 
 use Lib\Router;
 
-$router = new Router('/');
+$router = new Router('/test/router/trunk/');
 
-$router->map('GET', '/news', function() {
-    echo json_encode(\Models\News::get());
+$router->map('GET', 'news', function() {
+    //echo json_encode(\Models\News::get());
+	echo 1;
 });
-$router->map('GET', '/news/[:id]', function($id = 0) {
+$router->map('GET', 'news/[:id]', function($id = 0) {
     echo json_encode(\Models\News::get($id));
 });
 
 //$router->map('POST', '/news/[:newsId]', 'News#update');
-$router->map('PUT', '/news/[:newsId]', 'News#update');
+$router->map('PUT', 'news/[:newsId]', 'News#update');
 
-$router->map('POST', '/news', 'News#create');
-$router->map('DELETE', '/news/[:newsId]', 'News#delete');
-
-//used for cleaning the news table after phpunit tests
-$router->map('GET', '/my_super_secure_clean_database_url/[:action]', function($action = null) {
-    \Models\News::clean($action);
-});
+$router->map('POST', 'news', 'News#create');
+$router->map('DELETE', 'news/[:newsId]', 'News#delete');
 
 $routes = $router->getRoutes();
 
