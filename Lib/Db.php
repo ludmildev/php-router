@@ -1,5 +1,5 @@
 <?php
-namespace Lib\Db;
+namespace Lib;
 
 class Db {
 
@@ -26,7 +26,7 @@ class Db {
      * @param string $sql
      * @param array $params
      * @param options $pdoOptions
-     * @return \Lib\Db\Db
+     * @return \Lib\Db
      */
     public function prepare($sql, $params = array(), $pdoOptions = array())
     {
@@ -39,7 +39,7 @@ class Db {
     /**
      * 
      * @param array $params
-     * @return \Lib\Db\Db
+     * @return \Lib\Db
      */
     public function execute($params = array())
     {
