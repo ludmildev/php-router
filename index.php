@@ -8,19 +8,17 @@ include 'Lib/Input.php';
 
 use Lib\Router;
 
-$router = new Router('/');
+//USE:
+// url: [METHOD] [URL] [ACTION:callable function]
+// url: [METHOD] [URL] [ACTION:Class#method]
 
-$router->map('GET', '/', function() {
-	echo 'Home';
+$router = new Router('/router/trunk/');
+
+$router->map('GET', '/news', function() {
+	echo 'news';
 });
-$router->map('GET', 'home/page/[int:id]', function($id = 0) {
-    echo 'home-page-id=' . $id;
+$router->map('GET', '/news/[:newsId]', function($newsId = 0) {
+	echo json_encode([$newsId]);
 });
-
-$router->map('POST', 'news/[int:newsId]', 'Class#method');
-$router->map('PUT', 'news/[int:newsId]', 'Class#method');
-
-$router->map('POST', 'news', 'Class#method');
-$router->map('DELETE', 'news/[int:newsId]', 'Class#method');
 
 $router->match();
