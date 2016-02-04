@@ -5,8 +5,10 @@ ini_set("display_errors", 1);
 include 'Lib/Router.php';
 include 'Lib/Db.php';
 include 'Lib/Input.php';
+include 'Lib/Template.php';
 
 use Lib\Router;
+use Lib\Template;
 
 //USE:
 // url: [METHOD] [URL] [ACTION:callable function]
@@ -14,11 +16,22 @@ use Lib\Router;
 
 $router = new Router('/router/trunk/');
 
-$router->map('GET', '/news', function() {
-	echo 'news';
+$template = new Template('C:\wamp\www\test\router\trunk\Views');
+
+$router->map('GET', '/news', function($id = 0)
+{
+	
 });
-$router->map('GET', '/news/[:newsId]', function($newsId = 0) {
-	echo json_encode([$newsId]);
+$router->map('GET', '/news/[:newsId]', function($newsId = 0)
+{
+	global $template;
+	
+	$params['id'] = $newsId;
+	
+	echo $template
+	->setFolder('home')
+	->load('home')
+	->render($params);
 });
 
 $router->match();
