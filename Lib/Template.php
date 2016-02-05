@@ -42,6 +42,8 @@ class Template
 
     private function handleEcho($pageContent, $params)
     {
+        $matches = '';
+
         preg_match_all('/{{echo:(.*)}}/i', $pageContent, $matches, PREG_SET_ORDER);
 
         foreach($matches as $match)
@@ -50,33 +52,33 @@ class Template
                 $pageContent = preg_replace('/{{echo:'.$match[1].'}}/', $params[$match[1]], $pageContent);
             }
         }
-        
+
         return $pageContent;
     }
-    
+
     private function handleInclude($pageContent, $params)
     {
+        $matches = '';
+
         preg_match_all('/{{include:(.*)}}/i', $pageContent, $matches, PREG_SET_ORDER);
 
         foreach($matches as $match)
         {
             $includePath = str_replace('.', DIRECTORY_SEPARATOR, $match[1]);
-            
+
             $file = $this->_baseUrl . DIRECTORY_SEPARATOR . $includePath . '.php';
-            
+
             if (is_file($file) && is_readable($file))
             {
-                $subInclude = file_get_contents($this->_baseUrl . DIRECTORY_SEPARATOR . $includePath . '.php');
-                
-                $subInclude = $this->handleEcho($subInclude, $params);
-                
+                $subInclude = $this->handleEcho(file_get_contents($this->_baseUrl . DIRECTORY_SEPARATOR . $includePath . '.php'), $params);
+
                 $pageContent = preg_replace('/{{include:'.$match[1].'}}/', $subInclude, $pageContent);
             }
         }
-        
+
         return $pageContent;
     }
-    
+
 	public function render($params = [])
 	{
 		$render = '';
@@ -95,6 +97,6 @@ class Template
 		if ($this->_includeFooter)
 			$render .= $this->_includeFooter ? file_get_contents($this->_baseUrl . DIRECTORY_SEPARATOR . $this->_template . DIRECTORY_SEPARATOR . 'footer.php') : '';
 
-		return $render;
+        eval('?>' . $render);
 	}
 }
